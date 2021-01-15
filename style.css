@@ -1,0 +1,35 @@
+body {
+    background-color: cadetblue;
+/*    display: flex;
+    flex-wrap: wrap;*/
+}
+
+#main {
+
+}
+
+.line {
+    background-color: greenyellow;
+    border-style: dashed;
+    text-align: center;
+    display: inline-block;
+    width:10%;
+    height:100px;
+    margin:0.1%;
+}
+
+.selectedLine {
+    background-color: red;
+    border-style: dashed;
+    text-align: center;
+    display: inline-block;
+    width:10%;
+    height:100px;
+    margin:0.1%;
+}
+
+.button {
+    background-color: blue;
+    width:10.6%;
+
+}
