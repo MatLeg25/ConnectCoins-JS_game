@@ -73,8 +73,11 @@ elo(5);*/
 function generateTable(size) {
     const main_div = document.getElementById("main");
 
-
     addButtons(size);
+
+    const GameBoard = document.createElement("div");
+    GameBoard.id = "GameBoard";
+    main_div.appendChild(GameBoard);
 
     let counter =0;
     for (let i=1;i<=(size*size);i++) {
@@ -83,23 +86,29 @@ function generateTable(size) {
         newDiv.className = "line";
         newDiv.id = "DIVid"+counter;
         newDiv.innerText = counter;
-        main_div.appendChild(newDiv)
+        //main_div.appendChild(newDiv)
+        GameBoard.appendChild(newDiv);
         //console.log(counter);
 
         //add enter after each line
         if (counter%size===0) {
-            const putEnter = document.querySelector('div');
             const newLine = document.createElement('br');
-            putEnter.appendChild(newLine);
+            GameBoard.appendChild(newLine);
         }
         }
 }
 
 
 function getDivsColumn(size) {
-    const insideDivs = document.getElementsByClassName('line');
-   //console.log("INISIDE:",insideDivs);
     DIVidPrefix = 'DIVid';
+
+    const container = document.getElementById("GameBoard");
+    insideDivs = container.getElementsByTagName('div');
+
+    //const insideDivs = document.getElementsByClassName('line'); //not work after select (class changed)
+    //console.log("Ilosc DIV insice =",insideDivs.length);
+
+    //console.log("DIVS INSIDE:",insideDivs);
 
     columnID = [];
     columnID.push(["LineNum = ColumnNum","[Divs ID]"]); //add line to index 0
@@ -166,8 +175,8 @@ function addButtons(size) {
 //////////////////////////////////
 generateTable(5);
 DivsID = getDivsColumn(5);
-console.log(DivsID);
-//createColumnClass(DivsID);
+console.log('Created game board:\n', DivsID);
+
 
 
 function SelectDiv(column,size) {
