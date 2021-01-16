@@ -70,6 +70,15 @@ elo(5);*/
 ////////////////
 //third way
 
+//GLOBAL VARRIABLE
+//var size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
+const size = 5;
+const players_count = 2; //nie dopracowane dla wiecej
+var global_counter=0;
+///////
+
+
+
 function generateTable(size) {
     const main_div = document.getElementById("main");
 
@@ -129,10 +138,10 @@ function getDivsColumn(size) {
         //console.log(currentDivID,"R=",rest);
 
         //add column ID to relevant row in table (coresponding to column number)
-        if (rest != 0) {
+        if (rest !== 0) {
             (eval(variableName + rest)).push(DIVidPrefix+currentDivID);
         } else {
-            rest = 5;
+            rest = size;
             (eval(variableName + rest)).push(DIVidPrefix+currentDivID);
         }
     }
@@ -142,7 +151,7 @@ function getDivsColumn(size) {
     return columnID;
 }
 
-var size = 5;
+
 function addButtons(size) {
 
     const main_div = document.getElementById("main");
@@ -160,8 +169,7 @@ function addButtons(size) {
 
         // 3. Add event handler
         button.addEventListener("click", function () {
-            alert("Selected column: "+i);
-
+            //alert("Selected column: "+i);
            SelectDiv(i,size);
         });
     }
@@ -172,14 +180,67 @@ function addButtons(size) {
 }
 
 
+function addENDbutton() {
+    const main_div = document.getElementById("main");
+
+    //1. Create the button
+    const button = document.createElement("button");
+    button.innerHTML = "RESTART";
+    //2. Append into DOM
+    main_div.appendChild(button);
+    //3. Add event handle
+    button.addEventListener("click", function () {
+        window.location.reload(true);
+        });
+}
+
+
+
 //////////////////////////////////
-generateTable(5);
-DivsID = getDivsColumn(5);
+var PLAYERS = createPlayer(players_count);
+//console.log("Gracze: ",PLAYERSx);
+generateTable(size);
+addENDbutton();
+DivsID = getDivsColumn(size);
 console.log('Created game board:\n', DivsID);
 
 
 
+function createPlayer(count) {
+    players = []
+    for (i=1;i<=count;i++) {
+        const name = prompt("Give your name");
+        var Player = {
+            FirstName: name,
+            ID: i,
+            Color:null,
+            Selected: []
+        };
+        if (i===1) {Player.Color='red'} else {Player.Color='blue'};
+        players.push(Player);
+    }
+    console.log("Created players:",players);
+    //alert("Hello 1st, "+players[0].FirstName);
+    return players;
+}
+
+
+function SelectPlayer() {
+    if (global_counter%2===0) {
+        currentPlayer = PLAYERS[0];
+    } else {
+        currentPlayer = PLAYERS[1];
+    }
+
+    return currentPlayer;
+}
+
+
 function SelectDiv(column,size) {
+
+    currentPlayer = SelectPlayer();
+    alert("MOve: "+currentPlayer.FirstName);
+
     defaultClass = 'line';
     selectedClass = 'selectedLine';
     //alert("Puts into column"+column+"active!");
@@ -193,12 +254,13 @@ function SelectDiv(column,size) {
 
     //check DIVs class in selected column, from down to up - if default chenge to selected and return = change only one
     for (let i=selectedColumn.length-1;i>=0;i--) {
-        console.log("Checking element..",selectedColumn[i]);
+        console.log("\tChecking element..",selectedColumn[i]);
         const currentDIV = document.getElementById(selectedColumn[i]);
         if (currentDIV.className === defaultClass) {
-            alert("Zmiana koloru");
+            //alert("Zmiana koloru");
             currentDIV.className = selectedClass;
-            return alert("OK");
+            currentDIV.style.backgroundColor =currentPlayer.Color;
+            return global_counter++;
         }
     }
 }
