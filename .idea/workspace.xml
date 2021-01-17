@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d8897554-f514-41b4-829c-14593fc463c6" name="Default Changelist" comment="" />
+    <list default="true" id="d8897554-f514-41b4-829c-14593fc463c6" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/style.css" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,8 +20,12 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="JupyterTrust" id="812cadf7-c1b4-427d-8acd-b71bf20fd5a0" />
   <component name="ProjectId" id="1n1vVqWD1GwFXnDMv8CMLxxx019" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -65,6 +73,8 @@
       <workItem from="1610641600183" duration="8393000" />
       <workItem from="1610661532471" duration="2693000" />
       <workItem from="1610703631548" duration="12631000" />
+      <workItem from="1610800773577" duration="12126000" />
+      <workItem from="1610917257529" duration="1190000" />
     </task>
     <servers />
   </component>

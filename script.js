@@ -72,9 +72,10 @@ elo(5);*/
 
 //GLOBAL VARRIABLE
 //var size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
-const size = 5;
+const size = 3;
 const players_count = 2; //nie dopracowane dla wiecej
 var global_counter=0;
+const winPonints = 3;
 ///////
 
 
@@ -209,7 +210,8 @@ console.log('Created game board:\n', DivsID);
 function createPlayer(count) {
     players = []
     for (i=1;i<=count;i++) {
-        const name = prompt("Give your name");
+       // const name = prompt("Give your name");
+        name = "Player"+i;
         var Player = {
             FirstName: name,
             ID: i,
@@ -231,7 +233,6 @@ function SelectPlayer() {
     } else {
         currentPlayer = PLAYERS[1];
     }
-
     return currentPlayer;
 }
 
@@ -239,7 +240,7 @@ function SelectPlayer() {
 function SelectDiv(column,size) {
 
     currentPlayer = SelectPlayer();
-    alert("MOve: "+currentPlayer.FirstName);
+   // alert("MOve: "+currentPlayer.FirstName);
 
     defaultClass = 'line';
     selectedClass = 'selectedLine';
@@ -250,19 +251,72 @@ function SelectDiv(column,size) {
     const DivsID = getDivsColumn(size); //get ID of all DIVs (game board positions)
     const selectedColumn = DivsID[column]; //list of DIVs in selected column
 
-    console.log("Divs ID in selected column :", selectedColumn); //list with DIVs id from selected column
+    //console.log("Divs ID in selected column :", selectedColumn); //list with DIVs id from selected column
 
     //check DIVs class in selected column, from down to up - if default chenge to selected and return = change only one
     for (let i=selectedColumn.length-1;i>=0;i--) {
-        console.log("\tChecking element..",selectedColumn[i]);
+        //console.log("\tChecking element..",selectedColumn[i]);
         const currentDIV = document.getElementById(selectedColumn[i]);
         if (currentDIV.className === defaultClass) {
             //alert("Zmiana koloru");
             currentDIV.className = selectedClass;
-            currentDIV.style.backgroundColor =currentPlayer.Color;
+            currentDIV.style.backgroundColor = currentPlayer.Color;
+            checkWin();
             return global_counter++;
         }
     }
+}
+
+
+
+function checkWin () {
+    currentPlayer = SelectPlayer();
+    //alert("Current PLAYERS jest to on:"+currentPlayer.Color);
+
+    let suma = 0;
+    const container = document.getElementById("GameBoard");
+    insideDivs = container.getElementsByTagName('div');
+    //console.log("CeckWIN:",insideDivs);
+
+    // HORIZONTAL
+    let counter =0;
+    for (oneDiv of insideDivs){
+        counter ++;
+        if (oneDiv.style.backgroundColor === currentPlayer.Color) {
+                suma++;
+            } else {
+                suma = 0;
+            }
+        //console.log("IDe=",oneDiv.id,"|SUMA",suma);
+            if (suma === winPonints) {
+                return alert("WINNER(by poziom xD) is "+ currentPlayer.FirstName);
+            }
+        //suma = 0 after each line
+        if (counter % size === 0 ) {
+            //alert("Zerowanie"+oneDiv.id);
+            suma = 0};
+    }
+
+    //VERTICAL
+    let sumaV = 0;
+    let cou = 0;
+    const GameTable = getGameTable();
+    for (let i=0;i<GameTable.length;i++) {
+        for (let j=0;j<GameTable.length;j++) {
+            cou++;
+            //console.log("Tu",GameTable[i][j].id);
+            if (GameTable[j][i].style.backgroundColor === currentPlayer.Color) {
+                sumaV++;
+                if (sumaV === winPonints ) {return alert("WINNER(by pion xD) is "+ currentPlayer.FirstName);}
+            } else {
+                sumaV = 0;
+            }
+            //console.log("Iteracja",cou,GameTable[j][i],"SUma",sumaV);
+        }
+        sumaV = 0; //clear after each column
+    }
+    //console.log(global_counter+1,"|",size*size);
+    if (global_counter+1 === (size*size)) { alert("END of GAME - draw!");};
 }
 
 
@@ -271,3 +325,29 @@ function SelectDiv(column,size) {
 for(var b in window) {
   if(window.hasOwnProperty(b)) console.log(b);
 }*/
+
+function getGameTable () { //return array2D with index corresponding to position on board
+    const container = document.getElementById("GameBoard");
+    insideDivs = container.getElementsByTagName('div');
+
+    const GameTable = []
+    let tmp_row = [];
+
+    for (oneDiv of insideDivs) {
+        tmp_row.push(oneDiv);
+        if (tmp_row.length === size) {
+            GameTable.push(tmp_row);
+            tmp_row = [];
+        }
+    }
+    //console.log("Game table:",GameTable);
+    //console.log("[1][1]",GameTable[1][1])
+    return GameTable;
+}
+
+
+//check SKOS
+//getCOlumn - żeby nadawało klasę odpowiadajaca kolumnie -kolorownaie jak mysz bedzie ponad nia - (przerobic gdzie jest select by class .line)
+//okienko z aktualną sytuacja - kogo ruch, który tuch, itp
+//podcas zliczania checkWIn, niech zapisuje któe DIvy sprawdza - winner move = zaznaczy te divy ktore dlay wygrana
+//rozbic to na fukncje
