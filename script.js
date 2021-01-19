@@ -1,14 +1,27 @@
 
 //GLOBAL VARRIABLE
 //const size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
-const size = 5;
+const size = 7;
 const players_count = 2; //nie dopracowane dla wiecej
 var global_counter=0;
-const winPonints = 3;
+const winPonints = 3; //has to be less than size
 /////////////////////////////////////////////////////////
 
+//initGame()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//function initGame() {
+
+    var PLAYERS = createPlayer(players_count);
+    generateTable(size);
+    addENDbutton();
+    DivsID = getDivsColumn(size);
+    console.log('Created game board:\n', DivsID);
+    gameStats();
+//}
+
+////////////////////////////////////////////////////////EXTEND HTML
 function generateTable(size) {
     const main_div = document.getElementById("main");
 
@@ -38,50 +51,6 @@ function generateTable(size) {
 }
 
 
-function getDivsColumn(size) {
-    DIVidPrefix = 'DIVid';
-
-    const container = document.getElementById("GameBoard");
-    insideDivs = container.getElementsByTagName('div');
-
-    //const insideDivs = document.getElementsByClassName('line'); //not work after select (class changed)
-    //console.log("Ilosc DIV insice =",insideDivs.length);
-
-    //console.log("DIVS INSIDE:",insideDivs);
-
-    columnID = [];
-    columnID.push(["LineNum = ColumnNum","[Divs ID]"]); //add line to index 0
-
-    let counter = 0;
-    for (oneDiv of insideDivs) {
-        counter++;
-
-        currentDivID = oneDiv.id.slice(5); //get ID in range 0-999
-
-        var variableName = 'line';
-       if (counter<=size) {
-            newLine = eval(variableName + (counter) +'=[];'); //create dynamic variable "lineX" x= number of column
-            columnID.push(newLine);
-        }
-
-        rest = (counter%size);
-        //console.log(currentDivID,"R=",rest);
-
-        //add column ID to relevant row in table (coresponding to column number)
-        if (rest !== 0) {
-            (eval(variableName + rest)).push(DIVidPrefix+currentDivID);
-        } else {
-            rest = size;
-            (eval(variableName + rest)).push(DIVidPrefix+currentDivID);
-        }
-    }
-
-    //console.log(columnID);
-
-    return columnID;
-}
-
-
 function addButtons(size) {
 
     const main_div = document.getElementById("main");
@@ -92,7 +61,6 @@ function addButtons(size) {
         button.innerHTML = "Select column"+i;
         button.className ='button';
         button.id = i;
-
 
         // 2. Append somewhere
         main_div.appendChild(button);
@@ -131,23 +99,88 @@ function addENDbutton() {
 }
 
 
+function gameStats() {
+        // 1. Create the button
+        let DIVstats = document.createElement("div");
+        DIVstats.innerHTML = "Player move: ";
+        DIVstats.id = "stats";
+        const newLine = document.createElement('br');
+        const newLineHR = document.createElement('hr');
+        // 2. Append somewhere
+        document.body.appendChild(newLine);
+        document.body.appendChild(newLineHR);
+        document.body.appendChild(DIVstats);
+}
 
-/////////////////////////////////////////////////////////////////////////////////////////
-var PLAYERS = createPlayer(players_count);
-//console.log("Gracze: ",PLAYERSx);
-generateTable(size);
-addENDbutton();
-DivsID = getDivsColumn(size);
-console.log('Created game board:\n', DivsID);
-gameStats();
-/////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////READ INFO FROM HTML
+function getDivsColumn(size) {
+    DIVidPrefix = 'DIVid';
+
+    const container = document.getElementById("GameBoard");
+    insideDivs = container.getElementsByTagName('div');
+
+    //const insideDivs = document.getElementsByClassName('line'); //not work after select (class changed)
+    //console.log("Ilosc DIV insice =",insideDivs.length);
+    //console.log("DIVS INSIDE:",insideDivs);
+
+    columnID = [];
+    columnID.push(["LineNum = ColumnNum","[Divs ID]"]); //add line to index 0
+
+    let counter = 0;
+    for (oneDiv of insideDivs) {
+        counter++;
+
+        currentDivID = oneDiv.id.slice(5); //get ID
+
+        var variableName = 'line';
+       if (counter<=size) {
+            newLine = eval(variableName + (counter) +'=[];'); //create dynamic variable "lineX" x= number of column
+            columnID.push(newLine);
+        }
+
+        rest = (counter%size);
+        //console.log(currentDivID,"R=",rest);
+
+        //add column ID to relevant row in table (coresponding to column number)
+        if (rest !== 0) {
+            (eval(variableName + rest)).push(DIVidPrefix+currentDivID);
+        } else {
+            rest = size;
+            (eval(variableName + rest)).push(DIVidPrefix+currentDivID);
+        }
+    }
+    //console.log(columnID);
+    return columnID;
+}
+
+
+function getGameTable () { //return array2D with index corresponding to position on board
+    const container = document.getElementById("GameBoard");
+    insideDivs = container.getElementsByTagName('div');
+
+    const GameTable = []
+    let tmp_row = [];
+
+    for (oneDiv of insideDivs) {
+        tmp_row.push(oneDiv);
+        if (tmp_row.length === size) {
+            GameTable.push(tmp_row);
+            tmp_row = [];
+        }
+    }
+    //console.log("Game table:",GameTable);
+    //console.log("[1][1]",GameTable[1][1])
+    return GameTable;
+}
 
 
 function createPlayer(count) {
     players = []
     for (i=1;i<=count;i++) {
-        const name = prompt("Give your name");
-        //name = "Player"+i;
+        //const name = prompt("Give your name");
+        name = "Player"+i;
         var Player = {
             FirstName: name,
             ID: i,
@@ -163,6 +196,8 @@ function createPlayer(count) {
 }
 
 
+
+///////////////////////////////////////////////////////IN GAME FUNCTION
 function SelectPlayer() {
 
     if (global_counter%2===0) {
@@ -196,7 +231,7 @@ function SelectDiv(column,size) {
 
     //console.log("Divs ID in selected column :", selectedColumn); //list with DIVs id from selected column
 
-    //check DIVs class in selected column, from down to up - if default chenge to selected and return = change only one
+    //check DIVs class in selected column, from down to up - if default chenge to 'selected' and return = change only one
     for (let i=selectedColumn.length-1;i>=0;i--) {
         //console.log("\tChecking element..",selectedColumn[i]);
         const currentDIV = document.getElementById(selectedColumn[i]);
@@ -204,7 +239,7 @@ function SelectDiv(column,size) {
             //alert("Zmiana koloru");
             currentDIV.className = selectedClass;
             currentDIV.style.backgroundColor = currentPlayer.Color;
-            checkWin();
+            checkWin(currentPlayer);
             return global_counter++;
         }
     }
@@ -212,18 +247,30 @@ function SelectDiv(column,size) {
 
 
 
-function checkWin () {
-    currentPlayer = SelectPlayer();
-    WINpositions = []; //list to collect winner position
-    //alert("Current PLAYERS jest to on:"+currentPlayer.Color);
-
-    let suma = 0;
-    const container = document.getElementById("GameBoard");
-    insideDivs = container.getElementsByTagName('div');
-    //console.log("CeckWIN:",insideDivs);
+////////////////////////////////// CHECK GAME
+function checkWin(currentPlayer) {
 
     // HORIZONTAL
+    checkHorizontal(currentPlayer);
+
+    //VERTICAL
+    checkVertical(currentPlayer);
+
+    //DIAGONAL\\
+    checkDiagonal(currentPlayer);
+
+    //console.log(global_counter+1,"|",size*size);
+    if (global_counter+1 === (size*size)) { alert("END of GAME - draw!");};
+}
+
+
+function checkHorizontal(currentPlayer) {
+    let suma = 0;
     let counter =0;
+    WINpositions = [];
+    const container = document.getElementById("GameBoard");
+    insideDivs = container.getElementsByTagName('div');
+
     for (oneDiv of insideDivs){
         counter ++;
         if (oneDiv.style.backgroundColor === currentPlayer.Color) {
@@ -244,15 +291,16 @@ function checkWin () {
             //alert("Zerowanie"+oneDiv.id);
             suma = 0};
     }
+}
 
-    //VERTICAL
+
+function checkVertical(currentPlayer) {
     WINpositions = []; //list to collect winner position
     let sumaV = 0;
-    let cou = 0;
     const GameTable = getGameTable();
+
     for (let i=0;i<GameTable.length;i++) {
         for (let j=0;j<GameTable.length;j++) {
-            cou++;
             //console.log("Tu",GameTable[i][j].id);
             if (GameTable[j][i].style.backgroundColor === currentPlayer.Color) {
                 sumaV++;
@@ -267,52 +315,38 @@ function checkWin () {
         }
         sumaV = 0; //clear after each column
     }
-    //console.log(global_counter+1,"|",size*size);
-    if (global_counter+1 === (size*size)) { alert("END of GAME - draw!");};
+}
+
+
+function checkDiagonal(currentPlayer) {
+
+    const GameTable = getGameTable(); //game table, index start 0,0
 
     //DIAGONAL - SKOS - Left-Right \
-      //console.log("ELO,",GameTable) - tabela od zera
-    let temp=[];
-    sumaDLR = 0;
-    cou = 0;
     for (let i=0;i<(GameTable.length-winPonints+1);i++) {
         for (let j = 0; j < (GameTable.length-winPonints+1); j++) {
-            cou++;
-            checkSKOS_LR(i,j,cou);
-            //temp.push([x,y]);
-
+            checkSKOS_LR(GameTable,i,j,currentPlayer);
         }
-        //console.log("TMP tab DIAGOBAL:",temp);
     }
 
-
     //DIAGONAL - SKOS - Right-Left /
-    sumaDRL = 0;
-    let ce = 0;
-    //console.log(GameTable.length);
     for (let i=0;i<=(GameTable.length-winPonints);i++) {
         for (let j=(GameTable.length-winPonints);j<GameTable.length;j++) {
-            ce++;
-            checkSKOS_RL(i,j);
-            //console.log("Dziala |",GameTable[i][j],"|");
+            checkSKOS_RL(GameTable,i,j,currentPlayer);
         }
     }
 
 }
 
-function checkSKOS_LR(i,j,cou) {
+function checkSKOS_LR(GameTable,i,j,currentPlayer) {
     WINpositions = []; //list to collect winner position
 
 /*    console.log("log1",cou,"[",x,y,"]");
     console.log("log2",cou,"[",x+1,y+1,"]");
     console.log("log3",cou,"[",x+2,y+2,"]");*/
+
     let checkDiagonal = []
-
-    currentPlayer = SelectPlayer();
-
-    const GameTable = getGameTable();
     let checkDiagonalDIV = []
-
     let suma = 0;
 
     for (let Pmove=0;Pmove<winPonints;Pmove++) {
@@ -334,21 +368,14 @@ function checkSKOS_LR(i,j,cou) {
                 WINpositions = [];
             }
     }
-    //console.log("Diagonal to check: ", checkDiagonal);
-    //console.log("Diagonal to check DIV: ", checkDiagonalDIV);
 }
 
 
-function checkSKOS_RL(i,j) {
+function checkSKOS_RL(GameTable,i,j,currentPlayer) {
     WINpositions = []; //list to collect winner position
 
     let checkDiagonal = []
-
-    currentPlayer = SelectPlayer();
-
-    const GameTable = getGameTable();
     let checkDiagonalDIV = []
-
     let suma = 0;
 
     for (let Pmove=0;Pmove<winPonints;Pmove++) {
@@ -369,46 +396,12 @@ function checkSKOS_RL(i,j) {
                 suma=0;
                 WINpositions = [];
             }
-
     }
-    //console.log("Diagonal to check: ", checkDiagonal);
-    //console.log("Diagonal to check DIV: ", checkDiagonalDIV);
 }
 
 
 
-
-
-
-
-
-
-//see all vaariable in F12:
-/*
-for(var b in window) {
-  if(window.hasOwnProperty(b)) console.log(b);
-}*/
-
-function getGameTable () { //return array2D with index corresponding to position on board
-    const container = document.getElementById("GameBoard");
-    insideDivs = container.getElementsByTagName('div');
-
-    const GameTable = []
-    let tmp_row = [];
-
-    for (oneDiv of insideDivs) {
-        tmp_row.push(oneDiv);
-        if (tmp_row.length === size) {
-            GameTable.push(tmp_row);
-            tmp_row = [];
-        }
-    }
-    //console.log("Game table:",GameTable);
-    //console.log("[1][1]",GameTable[1][1])
-    return GameTable;
-}
-
-//backlight(3);
+/////////////////////////////////////DECORATION STYLE
 function backlight(columnID) {
     const column = getDivsColumn(size);
     //console.log("LISTA", column);
@@ -446,21 +439,16 @@ function gameWIN(currentPlayer,WINpositions){
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//see all vaariable in F12:
+/*
+for(var b in window) {
+  if(window.hasOwnProperty(b)) console.log(b);
+}*/
 
-function gameStats() {
-        // 1. Create the button
-        let DIVstats = document.createElement("div");
-        DIVstats.innerHTML = "Player move: ";
-        DIVstats.id = "stats";
-        const newLine = document.createElement('br');
-        const newLineHR = document.createElement('hr');
-        // 2. Append somewhere
-        document.body.appendChild(newLine);
-        document.body.appendChild(newLineHR);
-        document.body.appendChild(DIVstats);
-}
 
 
 //okienko z aktualną sytuacja - kogo ruch, który tuch, itp
 //rozbic to na fukncje
 //currentPlayer wywoływane tlyko raz na ruch gracza
+//endgame = draw
