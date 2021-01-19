@@ -1,82 +1,11 @@
-//alert("START")
-
-
-/*//FIRST WAY
-size = 5;
-generate_board(5);
-function generate_board(size) {
-    var my_div = null;
-/!*!//working
-    //create new DIV and put into some content
-    newDiv = document.createElement("div");
-    newDiv.innerHTML = "<h1>Hi there and greetings!</h1>";
-
-  // add the newly created element and it's content into the DOM
-    const main_div = document.getElementById("main");
-    //document.body.insertBefore(newDiv, main_div); //add before selected
-    main_div.innerHTML = newDiv;*!/
-
-    const main_div = document.getElementById("main");
-    const newLine = document.createElement('br');
-    let counter =0;
-    for (let i=1;i<=size;i++) {
-        counter+=1;
-        for (let j=1;j<=size;j++) {
-            newDiv = document.createElement("div");
-            newDiv.className = "line";
-            newDiv.innerText = i;
-            main_div.appendChild(newDiv)
-        }
-        const testElement = document.querySelector('div');
-        const lineBreak = document.createElement('br');
-        testElement.appendChild(lineBreak);
-    }
-}*/
-
-//////////////////////////////////////////
-//SECOND WAY
-/*
-function generateLine(size) {
-    const main_div = document.getElementById("main");
-    const newLine = document.createElement('br');
-    let counter =0;
-    for (let i=1;i<=size;i++) {
-        newDiv = document.createElement("div");
-        newDiv.className = "line";
-        newDiv.innerText = i;
-        main_div.appendChild(newDiv)
-        console.log(counter);
-        }
-}
-
-
-function elo(size) {
-    const inside_divs = document.getElementsByTagName('div');
-    console.log("INS",inside_divs);
-    const newLine = document.createElement('p');
-    for (let i=1;i<=size;i++) {
-        generateLine(5);
-
-        //put ENTER after line
-        const testElement = document.querySelector('div');
-        const lineBreak = document.createElement('br');
-        testElement.appendChild(lineBreak);
-    }
-}
-
-elo(5);*/
-
-
-////////////////
-//third way
 
 //GLOBAL VARRIABLE
-//var size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
-const size = 3;
+//const size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
+const size = 5;
 const players_count = 2; //nie dopracowane dla wiecej
 var global_counter=0;
 const winPonints = 3;
-///////
+/////////////////////////////////////////////////////////
 
 
 
@@ -127,7 +56,7 @@ function getDivsColumn(size) {
     for (oneDiv of insideDivs) {
         counter++;
 
-        currentDivID = oneDiv.id.slice(5,8); //get ID in range 0-999
+        currentDivID = oneDiv.id.slice(5); //get ID in range 0-999
 
         var variableName = 'line';
        if (counter<=size) {
@@ -173,6 +102,12 @@ function addButtons(size) {
             //alert("Selected column: "+i);
            SelectDiv(i,size);
         });
+        button.addEventListener("mouseover", function () {
+           backlight(i);
+        });
+        button.addEventListener("mouseout", function () {
+           backlightOFF(i);
+        });
     }
         //Put ENTER after buttons
         const putEnter = document.querySelector('div');
@@ -197,28 +132,29 @@ function addENDbutton() {
 
 
 
-//////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 var PLAYERS = createPlayer(players_count);
 //console.log("Gracze: ",PLAYERSx);
 generateTable(size);
 addENDbutton();
 DivsID = getDivsColumn(size);
 console.log('Created game board:\n', DivsID);
-
+gameStats();
+/////////////////////////////////////////////////////////////////////////////////////////
 
 
 function createPlayer(count) {
     players = []
     for (i=1;i<=count;i++) {
-       // const name = prompt("Give your name");
-        name = "Player"+i;
+        const name = prompt("Give your name");
+        //name = "Player"+i;
         var Player = {
             FirstName: name,
             ID: i,
             Color:null,
             Selected: []
         };
-        if (i===1) {Player.Color='red'} else {Player.Color='blue'};
+        if (i===1) {Player.Color='blue'} else {Player.Color='lime'};
         players.push(Player);
     }
     console.log("Created players:",players);
@@ -228,11 +164,18 @@ function createPlayer(count) {
 
 
 function SelectPlayer() {
+
     if (global_counter%2===0) {
         currentPlayer = PLAYERS[0];
     } else {
         currentPlayer = PLAYERS[1];
     }
+
+    console.log(currentPlayer.FirstName);
+
+    const playerMove = document.getElementById('stats'); //display name moving player
+    playerMove.innerHTML = currentPlayer.FirstName;
+
     return currentPlayer;
 }
 
@@ -271,6 +214,7 @@ function SelectDiv(column,size) {
 
 function checkWin () {
     currentPlayer = SelectPlayer();
+    WINpositions = []; //list to collect winner position
     //alert("Current PLAYERS jest to on:"+currentPlayer.Color);
 
     let suma = 0;
@@ -284,12 +228,16 @@ function checkWin () {
         counter ++;
         if (oneDiv.style.backgroundColor === currentPlayer.Color) {
                 suma++;
+                WINpositions.push(oneDiv);
             } else {
                 suma = 0;
+                WINpositions = []; //reset when break winning line
             }
         //console.log("IDe=",oneDiv.id,"|SUMA",suma);
             if (suma === winPonints) {
-                return alert("WINNER(by poziom xD) is "+ currentPlayer.FirstName);
+                console.log(WINpositions);
+                //return alert("WINNER(by poziom xD) is "+ currentPlayer.FirstName);
+                return gameWIN(currentPlayer,WINpositions);
             }
         //suma = 0 after each line
         if (counter % size === 0 ) {
@@ -298,6 +246,7 @@ function checkWin () {
     }
 
     //VERTICAL
+    WINpositions = []; //list to collect winner position
     let sumaV = 0;
     let cou = 0;
     const GameTable = getGameTable();
@@ -307,9 +256,12 @@ function checkWin () {
             //console.log("Tu",GameTable[i][j].id);
             if (GameTable[j][i].style.backgroundColor === currentPlayer.Color) {
                 sumaV++;
-                if (sumaV === winPonints ) {return alert("WINNER(by pion xD) is "+ currentPlayer.FirstName);}
+                WINpositions.push(GameTable[j][i]);
+                //if (sumaV === winPonints ) {return alert("WINNER(by pion xD) is "+ currentPlayer.FirstName);}
+                if (sumaV === winPonints ) {return gameWIN(currentPlayer,WINpositions);}
             } else {
                 sumaV = 0;
+                WINpositions = []; //reset when break winning line
             }
             //console.log("Iteracja",cou,GameTable[j][i],"SUma",sumaV);
         }
@@ -317,7 +269,118 @@ function checkWin () {
     }
     //console.log(global_counter+1,"|",size*size);
     if (global_counter+1 === (size*size)) { alert("END of GAME - draw!");};
+
+    //DIAGONAL - SKOS - Left-Right \
+      //console.log("ELO,",GameTable) - tabela od zera
+    let temp=[];
+    sumaDLR = 0;
+    cou = 0;
+    for (let i=0;i<(GameTable.length-winPonints+1);i++) {
+        for (let j = 0; j < (GameTable.length-winPonints+1); j++) {
+            cou++;
+            checkSKOS_LR(i,j,cou);
+            //temp.push([x,y]);
+
+        }
+        //console.log("TMP tab DIAGOBAL:",temp);
+    }
+
+
+    //DIAGONAL - SKOS - Right-Left /
+    sumaDRL = 0;
+    let ce = 0;
+    //console.log(GameTable.length);
+    for (let i=0;i<=(GameTable.length-winPonints);i++) {
+        for (let j=(GameTable.length-winPonints);j<GameTable.length;j++) {
+            ce++;
+            checkSKOS_RL(i,j);
+            //console.log("Dziala |",GameTable[i][j],"|");
+        }
+    }
+
 }
+
+function checkSKOS_LR(i,j,cou) {
+    WINpositions = []; //list to collect winner position
+
+/*    console.log("log1",cou,"[",x,y,"]");
+    console.log("log2",cou,"[",x+1,y+1,"]");
+    console.log("log3",cou,"[",x+2,y+2,"]");*/
+    let checkDiagonal = []
+
+    currentPlayer = SelectPlayer();
+
+    const GameTable = getGameTable();
+    let checkDiagonalDIV = []
+
+    let suma = 0;
+
+    for (let Pmove=0;Pmove<winPonints;Pmove++) {
+            //console.log("GG",i+Pmove,"|",j+Pmove);
+            x=i+Pmove;
+            y=j+Pmove;
+            checkDiagonal.push([x,y]); //push coordinate of div
+            checkDiagonalDIV.push(GameTable[x][y]); //push DIV get by coordinates
+
+            if (GameTable[x][y].style.backgroundColor === currentPlayer.Color) {
+                suma++;
+                WINpositions.push(GameTable[x][y]);
+                if (suma===winPonints) {
+                    //return alert(currentPlayer.FirstName+ "has won by SKOS LR");
+                    return gameWIN(currentPlayer,WINpositions);
+                }
+            } else {
+                suma=0;
+                WINpositions = [];
+            }
+    }
+    //console.log("Diagonal to check: ", checkDiagonal);
+    //console.log("Diagonal to check DIV: ", checkDiagonalDIV);
+}
+
+
+function checkSKOS_RL(i,j) {
+    WINpositions = []; //list to collect winner position
+
+    let checkDiagonal = []
+
+    currentPlayer = SelectPlayer();
+
+    const GameTable = getGameTable();
+    let checkDiagonalDIV = []
+
+    let suma = 0;
+
+    for (let Pmove=0;Pmove<winPonints;Pmove++) {
+            //console.log("GG",i+Pmove,"|",j+Pmove);
+            x=i+Pmove;
+            y=j-Pmove;
+            checkDiagonal.push([x,y]); //push coordinate of div
+            checkDiagonalDIV.push(GameTable[x][y]); //push DIV get by coordinates
+
+            if (GameTable[x][y].style.backgroundColor === currentPlayer.Color) {
+                suma++;
+                WINpositions.push(GameTable[x][y]);
+                if (suma===winPonints) {
+                    //return alert(currentPlayer.FirstName+ "has won by SKOS RL");
+                    return gameWIN(currentPlayer,WINpositions);
+                }
+            } else {
+                suma=0;
+                WINpositions = [];
+            }
+
+    }
+    //console.log("Diagonal to check: ", checkDiagonal);
+    //console.log("Diagonal to check DIV: ", checkDiagonalDIV);
+}
+
+
+
+
+
+
+
 
 
 //see all vaariable in F12:
@@ -345,9 +408,59 @@ function getGameTable () { //return array2D with index corresponding to position
     return GameTable;
 }
 
+//backlight(3);
+function backlight(columnID) {
+    const column = getDivsColumn(size);
+    //console.log("LISTA", column);
+    //console.log("Element", column[1])
+    const DIVprefix = "DIVid";
 
-//check SKOS
-//getCOlumn - żeby nadawało klasę odpowiadajaca kolumnie -kolorownaie jak mysz bedzie ponad nia - (przerobic gdzie jest select by class .line)
+    for (DIV of column[columnID]) {
+        const currentID = DIV.slice(5); //separete id number from id name
+        let currentDIV = document.getElementById(DIVprefix+currentID);
+        //console.log(currentDIV);
+        currentDIV.style.opacity = '0.3';
+    }
+}
+
+
+function backlightOFF(columnID) {
+    const column = getDivsColumn(size);
+    const DIVprefix = "DIVid";
+
+    for (DIV of column[columnID]) {
+        const currentID = DIV.slice(5); //separete id number from id name
+        let currentDIV = document.getElementById(DIVprefix+currentID);
+        currentDIV.style.opacity = '1';
+    }
+}
+
+
+function gameWIN(currentPlayer,WINpositions){
+    alert(currentPlayer.FirstName+" has won the game!")
+    console.log("Win positions:",WINpositions);
+    let move = 0
+    for (div of WINpositions) {
+        move++;
+        div.className = "winStyle";
+    }
+}
+
+
+function gameStats() {
+        // 1. Create the button
+        let DIVstats = document.createElement("div");
+        DIVstats.innerHTML = "Player move: ";
+        DIVstats.id = "stats";
+        const newLine = document.createElement('br');
+        const newLineHR = document.createElement('hr');
+        // 2. Append somewhere
+        document.body.appendChild(newLine);
+        document.body.appendChild(newLineHR);
+        document.body.appendChild(DIVstats);
+}
+
+
 //okienko z aktualną sytuacja - kogo ruch, który tuch, itp
-//podcas zliczania checkWIn, niech zapisuje któe DIvy sprawdza - winner move = zaznaczy te divy ktore dlay wygrana
 //rozbic to na fukncje
+//currentPlayer wywoływane tlyko raz na ruch gracza
