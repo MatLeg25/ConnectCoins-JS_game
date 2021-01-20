@@ -1,25 +1,24 @@
 
 //GLOBAL VARRIABLE
 //const size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
-const size = 7;
-const players_count = 2; //nie dopracowane dla wiecej
+//var size = size*1; JavaScript variables data type is not defined, *1 to convert size to number
+const size = 4;
+const PlayersCount = 4; //nie dopracowane dla wiecej
 var global_counter=0;
-const winPonints = 3; //has to be less than size
+var winPonints = 4; //has to be less than size
 /////////////////////////////////////////////////////////
-
-//initGame()
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//function initGame() {
-
-    var PLAYERS = createPlayer(players_count);
+//////////////////////////////////////////////////////////////
+    setScreen();
     generateTable(size);
     addENDbutton();
+
     DivsID = getDivsColumn(size);
     console.log('Created game board:\n', DivsID);
+
+    var PLAYERS = createPlayer(PlayersCount);
     gameStats();
-//}
+
+/////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////EXTEND HTML
 function generateTable(size) {
@@ -106,10 +105,15 @@ function gameStats() {
         DIVstats.id = "stats";
         const newLine = document.createElement('br');
         const newLineHR = document.createElement('hr');
+        var playerName = document.createElement('div');
+        playerName.id="playerName";
+        playerName.innerHTML = PLAYERS[0].FirstName;
+        DIVstats
         // 2. Append somewhere
         document.body.appendChild(newLine);
         document.body.appendChild(newLineHR);
         document.body.appendChild(DIVstats);
+        DIVstats.appendChild(playerName);
 }
 
 
@@ -165,7 +169,9 @@ function getGameTable () { //return array2D with index corresponding to position
 
     for (oneDiv of insideDivs) {
         tmp_row.push(oneDiv);
-        if (tmp_row.length === size) {
+        //JavaScript variables data type is not defined, +'X' to convert both to string (to be comparable)
+        /*console.log("DEBUG_line168| Line length:",typeof (tmp_row.length),"SIZE",typeof (size));*/
+        if (tmp_row.length+'X' === size+'X') {
             GameTable.push(tmp_row);
             tmp_row = [];
         }
@@ -176,8 +182,28 @@ function getGameTable () { //return array2D with index corresponding to position
 }
 
 
+function getRandomColor(Players) {
+    let colorList = ['red','blue','orange','magenta','lime'];
+    min=0;
+    max=colorList.length;
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      num =  Math.floor(Math.random() * (max - min)) + min;
+     /* console.log("Random",num);*/
+
+      for (let i=0;i<Players.length;i++) {
+          num =  Math.floor(Math.random() * (max - min)) + min;
+          max--;
+          Players[i].Color = colorList[num];
+          //console.log(colorList.length);
+          colorList.splice(num, 1);
+      }
+    return Players;
+}
+
 function createPlayer(count) {
     players = []
+
     for (i=1;i<=count;i++) {
         //const name = prompt("Give your name");
         name = "Player"+i;
@@ -191,6 +217,8 @@ function createPlayer(count) {
         players.push(Player);
     }
     console.log("Created players:",players);
+
+    players = getRandomColor(players); //assign random color
     //alert("Hello 1st, "+players[0].FirstName);
     return players;
 }
@@ -200,25 +228,36 @@ function createPlayer(count) {
 ///////////////////////////////////////////////////////IN GAME FUNCTION
 function SelectPlayer() {
 
+/*    //TWO PLAYERS
     if (global_counter%2===0) {
         currentPlayer = PLAYERS[0];
     } else {
         currentPlayer = PLAYERS[1];
+    }*/
+
+    let PlayerIndex = global_counter;
+    /*console.log("GC",global_counter)*/
+    if (global_counter >= PlayersCount) {
+        PlayerIndex = (global_counter%PlayersCount);
     }
 
-    console.log(currentPlayer.FirstName);
+    /*console.log("PI2",PlayerIndex)*/
+    currentPlayer = PLAYERS[PlayerIndex];
 
-    const playerMove = document.getElementById('stats'); //display name moving player
-    playerMove.innerHTML = currentPlayer.FirstName;
+    if (PlayerIndex === PlayersCount-1) {nextPlayer = PLAYERS[0]} else {nextPlayer = PLAYERS[PlayerIndex+1]}; // winnym miejscu zeby ogarniac start i full kolumne
+
+    console.log("Curren player:",currentPlayer.FirstName);
+    console.log("Next player:",nextPlayer.FirstName);
+
+    const playerMove = document.getElementById('playerName'); //display name next moving player
+    playerMove.innerHTML = nextPlayer.FirstName;
+    playerMove.style.backgroundColor = nextPlayer.Color;
 
     return currentPlayer;
 }
 
 
 function SelectDiv(column,size) {
-
-    currentPlayer = SelectPlayer();
-   // alert("MOve: "+currentPlayer.FirstName);
 
     defaultClass = 'line';
     selectedClass = 'selectedLine';
@@ -233,10 +272,10 @@ function SelectDiv(column,size) {
 
     //check DIVs class in selected column, from down to up - if default chenge to 'selected' and return = change only one
     for (let i=selectedColumn.length-1;i>=0;i--) {
-        //console.log("\tChecking element..",selectedColumn[i]);
+/*        console.log("\tChecking element..",selectedColumn[i]);*/
         const currentDIV = document.getElementById(selectedColumn[i]);
         if (currentDIV.className === defaultClass) {
-            //alert("Zmiana koloru");
+            currentPlayer = SelectPlayer();
             currentDIV.className = selectedClass;
             currentDIV.style.backgroundColor = currentPlayer.Color;
             checkWin(currentPlayer);
@@ -250,14 +289,16 @@ function SelectDiv(column,size) {
 ////////////////////////////////// CHECK GAME
 function checkWin(currentPlayer) {
 
+    const GameTable = getGameTable();
+
     // HORIZONTAL
     checkHorizontal(currentPlayer);
 
     //VERTICAL
-    checkVertical(currentPlayer);
+    checkVertical(GameTable,currentPlayer);
 
     //DIAGONAL\\
-    checkDiagonal(currentPlayer);
+    checkDiagonal(GameTable,currentPlayer);
 
     //console.log(global_counter+1,"|",size*size);
     if (global_counter+1 === (size*size)) { alert("END of GAME - draw!");};
@@ -294,10 +335,9 @@ function checkHorizontal(currentPlayer) {
 }
 
 
-function checkVertical(currentPlayer) {
+function checkVertical(GameTable,currentPlayer) {
     WINpositions = []; //list to collect winner position
     let sumaV = 0;
-    const GameTable = getGameTable();
 
     for (let i=0;i<GameTable.length;i++) {
         for (let j=0;j<GameTable.length;j++) {
@@ -318,9 +358,9 @@ function checkVertical(currentPlayer) {
 }
 
 
-function checkDiagonal(currentPlayer) {
+function checkDiagonal(GameTable,currentPlayer) {
 
-    const GameTable = getGameTable(); //game table, index start 0,0
+    /*const GameTable = getGameTable(); //game table, index start 0,0*/
 
     //DIAGONAL - SKOS - Left-Right \
     for (let i=0;i<(GameTable.length-winPonints+1);i++) {
@@ -331,11 +371,10 @@ function checkDiagonal(currentPlayer) {
 
     //DIAGONAL - SKOS - Right-Left /
     for (let i=0;i<=(GameTable.length-winPonints);i++) {
-        for (let j=(GameTable.length-winPonints);j<GameTable.length;j++) {
+        for (let j=winPonints-1;j<GameTable.length;j++) {
             checkSKOS_RL(GameTable,i,j,currentPlayer);
         }
     }
-
 }
 
 function checkSKOS_LR(GameTable,i,j,currentPlayer) {
@@ -439,6 +478,45 @@ function gameWIN(currentPlayer,WINpositions){
     }
 }
 
+
+
+//////////////////////////////////////////WINDOW PROPERTY
+//adjust site to user screen
+function setScreen() {
+    //get resolution of user screen
+    ScreenWidth = window.screen.width
+    ScreenHeight = window.screen.height
+    console.log("Screen:",ScreenWidth, "x", ScreenHeight);
+    //set minimum dimension
+    if (ScreenWidth > ScreenHeight) {
+        minScreen = ScreenHeight
+    } else {
+        minScreen = ScreenWidth
+    };
+    //set one dive size to be adjusted to game area (-300px due to buttons)
+    oneDivSize = (minScreen - 300) / size;
+    oneDivSize = oneDivSize + 'px';
+    /*console.log(oneDivSize);*/
+
+    //GET current value of variable from CSS file
+    /*x = getComputedStyle(document.documentElement)
+        .getPropertyValue('--singleDIVwidth');
+    y = getComputedStyle(document.documentElement)
+        .getPropertyValue('--singleDIVheight');
+    console.log(x,y);*/
+
+    //SET value of variable to CSS file
+    document.documentElement.style
+        .setProperty('--singleDIVwidth', oneDivSize);
+    document.documentElement.style
+        .setProperty('--singleDIVheight', oneDivSize);
+    /*document.documentElement.style
+        .setProperty('--GameTableSize', (size*oneDivSize+10)+'px';*/
+}
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //see all vaariable in F12:
 /*
@@ -449,6 +527,4 @@ for(var b in window) {
 
 
 //okienko z aktualną sytuacja - kogo ruch, który tuch, itp
-//rozbic to na fukncje
-//currentPlayer wywoływane tlyko raz na ruch gracza
-//endgame = draw
+//init form - ustaw inie,kolor
