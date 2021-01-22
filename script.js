@@ -1,23 +1,33 @@
 
 //GLOBAL VARRIABLE
-//const size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
-//var size = size*1; JavaScript variables data type is not defined, *1 to convert size to number
-const size = 4;
-const PlayersCount = 4; //nie dopracowane dla wiecej
+let size = 8;
 var global_counter=0;
-var winPonints = 4; //has to be less than size
+let PlayersCount = 2;
+var winPonints = 3; //has to be less than size
+let PLAYERS="";
+let initDefined=false;
 /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
-    setScreen();
-    generateTable(size);
-    addENDbutton();
 
-    DivsID = getDivsColumn(size);
-    console.log('Created game board:\n', DivsID);
+askInput();
 
-    var PLAYERS = createPlayer(PlayersCount);
-    gameStats();
+function initGame() {
 
+    if (initDefined===false) {
+        PLAYERS = createPlayer(PlayersCount);
+    }
+        size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
+        size = parseInt(size, 0);
+
+        setScreen(size);
+        generateTable(size);
+        addENDbutton();
+
+        DivsID = getDivsColumn(size);
+        console.log('Created game board:\n', DivsID);
+        gameStats();
+        initDefined=true;
+}
 /////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////EXTEND HTML
@@ -85,35 +95,73 @@ function addButtons(size) {
 
 function addENDbutton() {
     const main_div = document.getElementById("main");
+    const EndButtons = document.createElement('div');
+    EndButtons.id = 'EndButtons';
+    main_div.appendChild(EndButtons)
 
-    //1. Create the button
+    //1. Create the button RESTART
     const button = document.createElement("button");
     button.innerHTML = "RESTART";
     //2. Append into DOM
-    main_div.appendChild(button);
+    EndButtons.appendChild(button);
     //3. Add event handle
     button.addEventListener("click", function () {
         window.location.reload(true);
+        });
+    //1. Create the button PLAY AGAIN
+    const button2 = document.createElement("button");
+    button2.innerHTML = "PLAY AGAIN";
+    //2. Append into DOM
+    EndButtons.appendChild(button2);
+    //3. Add event handle
+    button2.addEventListener("click", function () {
+        const NewRound = document.getElementById("main");
+        NewRound.innerHTML = ''; //clear div 'main' before restart the game
+        global_counter=0;
+        initGame();
         });
 }
 
 
 function gameStats() {
+        mainDIV = document.getElementById('main');
         // 1. Create the button
         let DIVstats = document.createElement("div");
-        DIVstats.innerHTML = "Player move: ";
+        DIVstats.innerHTML = "CURRENT Player: ";
         DIVstats.id = "stats";
-        const newLine = document.createElement('br');
         const newLineHR = document.createElement('hr');
         var playerName = document.createElement('div');
-        playerName.id="playerName";
+        playerName.id="playerNameCURRENT";
         playerName.innerHTML = PLAYERS[0].FirstName;
-        DIVstats
         // 2. Append somewhere
-        document.body.appendChild(newLine);
-        document.body.appendChild(newLineHR);
-        document.body.appendChild(DIVstats);
+        mainDIV.appendChild(newLineHR);
+        mainDIV.appendChild(DIVstats);
         DIVstats.appendChild(playerName);
+
+        //DIV player list
+        let DIVlist = document.createElement("div");
+        DIVlist.id = "DIVplayersList";
+        DIVstats.appendChild(DIVlist);
+        for (let i=0;i<PLAYERS.length;i++) {
+            let DIVplayer = document.createElement("div");
+            DIVplayer.id = "DIVplayer"+i;
+            DIVplayer.innerHTML = PLAYERS[i].FirstName;
+            DIVplayer.style.border = '1px solid black';
+            DIVlist.appendChild(DIVplayer);
+        }
+
+        //NEXT PLAYER
+        // 1. Create the button
+        let DIVstatsNEXT = document.createElement("div");
+        DIVstatsNEXT.innerHTML = "NEXT Player: ";
+        DIVstatsNEXT.id = "statsNEXT";
+        var playerNameNEXT = document.createElement('div');
+        playerNameNEXT.id="playerNameNEXT";
+        playerNameNEXT.innerHTML = PLAYERS[1].FirstName;
+        // 2. Append somewhere
+        mainDIV.appendChild(DIVstatsNEXT);
+        DIVstatsNEXT.appendChild(playerNameNEXT);
+
 }
 
 
@@ -205,8 +253,8 @@ function createPlayer(count) {
     players = []
 
     for (i=1;i<=count;i++) {
-        //const name = prompt("Give your name");
-        name = "Player"+i;
+        const name = prompt("Give name for player"+i);
+       /* name = "Player"+i;*/
         var Player = {
             FirstName: name,
             ID: i,
@@ -243,15 +291,49 @@ function SelectPlayer() {
 
     /*console.log("PI2",PlayerIndex)*/
     currentPlayer = PLAYERS[PlayerIndex];
+    console.log("Current playerINDEXX:",PlayerIndex);
 
-    if (PlayerIndex === PlayersCount-1) {nextPlayer = PLAYERS[0]} else {nextPlayer = PLAYERS[PlayerIndex+1]}; // winnym miejscu zeby ogarniac start i full kolumne
+    if (PlayerIndex === PlayersCount-1) {nextPlayer = PLAYERS[0]} else {nextPlayer = PLAYERS[PlayerIndex+1]};
 
-    console.log("Curren player:",currentPlayer.FirstName);
+
+    ////////////////////////////////EDIT - the first version was one step back
+    if (PlayerIndex === PlayersCount-2) {nextPlayer2 = PLAYERS[0]} else {nextPlayer2 = PLAYERS[PlayerIndex+2]};
+    if (PlayerIndex === PlayersCount-1) {nextPlayer2 = PLAYERS[1]};
+
+/*    console.log("Current player:",currentPlayer.FirstName);
     console.log("Next player:",nextPlayer.FirstName);
+    currentPlayer = nextPlayer;
+    nextPlayer = nextPlayer2;*/
+    ///////////////////////////////////////////
 
-    const playerMove = document.getElementById('playerName'); //display name next moving player
-    playerMove.innerHTML = nextPlayer.FirstName;
-    playerMove.style.backgroundColor = nextPlayer.Color;
+    console.log("Current player:",currentPlayer.FirstName);
+    console.log("Next player:",nextPlayer.FirstName);
+    console.log("Next player2:",nextPlayer2.FirstName);
+    console.log("____________________________________________");
+
+    ////!!! REAGSIGNED currentPlayer => nextPlayer, nextPlayer=>nextPlayer2;
+
+    //FORMATING DIV id='stats'
+    const CURRENTplayerMove = document.getElementById('playerNameCURRENT'); //display name next moving player
+    CURRENTplayerMove.innerHTML = nextPlayer.FirstName;
+    CURRENTplayerMove.style.backgroundColor = nextPlayer.Color;
+
+    const NEXTplayerMove = document.getElementById('playerNameNEXT'); //display name next moving player
+    NEXTplayerMove.innerHTML = nextPlayer2.FirstName;
+    NEXTplayerMove.style.backgroundColor = nextPlayer2.Color;
+
+    //formating DIV id='DIVplayersList'
+    for (let i=0;i<PLAYERS.length;i++){
+        let statsCurrentPlayer = document.getElementById('DIVplayer'+i);
+        statsCurrentPlayer.style.border=('1px solid black');
+        statsCurrentPlayer.style.color='black';
+        statsCurrentPlayer.style.backgroundColor = PLAYERS[i].Color;
+            if (parseInt(statsCurrentPlayer.id.slice(9))===nextPlayer.ID-1) {
+                statsCurrentPlayer.style.border=('3px solid red');
+                statsCurrentPlayer.style.color='white';}
+            if (parseInt(statsCurrentPlayer.id.slice(9))===nextPlayer2.ID-1) {
+                statsCurrentPlayer.style.border = ('3px dashed hotpink');}
+    }
 
     return currentPlayer;
 }
@@ -301,7 +383,10 @@ function checkWin(currentPlayer) {
     checkDiagonal(GameTable,currentPlayer);
 
     //console.log(global_counter+1,"|",size*size);
-    if (global_counter+1 === (size*size)) { alert("END of GAME - draw!");};
+    if (global_counter+1 === (size*size)) {
+        alert("END of GAME - draw!");
+        EndGame();
+    };
 }
 
 
@@ -476,13 +561,14 @@ function gameWIN(currentPlayer,WINpositions){
         move++;
         div.className = "winStyle";
     }
+    EndGame();
 }
 
 
 
 //////////////////////////////////////////WINDOW PROPERTY
 //adjust site to user screen
-function setScreen() {
+function setScreen(size) {
     //get resolution of user screen
     ScreenWidth = window.screen.width
     ScreenHeight = window.screen.height
@@ -493,8 +579,8 @@ function setScreen() {
     } else {
         minScreen = ScreenWidth
     };
-    //set one dive size to be adjusted to game area (-300px due to buttons)
-    oneDivSize = (minScreen - 300) / size;
+    //set one dive size to be adjusted to game area (-350px due to buttons)
+    oneDivSize = (minScreen - 350) / size;
     oneDivSize = oneDivSize + 'px';
     /*console.log(oneDivSize);*/
 
@@ -510,8 +596,8 @@ function setScreen() {
         .setProperty('--singleDIVwidth', oneDivSize);
     document.documentElement.style
         .setProperty('--singleDIVheight', oneDivSize);
-    /*document.documentElement.style
-        .setProperty('--GameTableSize', (size*oneDivSize+10)+'px';*/
+/*    document.documentElement.style
+        .setProperty('--GameBoardSize', (size*oneDivSize+10)+'px');*/
 }
 
 
@@ -528,3 +614,119 @@ for(var b in window) {
 
 //okienko z aktualną sytuacja - kogo ruch, który tuch, itp
 //init form - ustaw inie,kolor
+
+
+function askInput() {
+
+    //1. Create HTML element
+    const inputData = document.createElement("div");
+    inputData.id = "inputData";
+    const button = document.createElement("button");
+    button.innerHTML = "StartGame!";
+    //2. Append into DOM
+
+    document.body.appendChild(inputData);
+    inputData.appendChild(button);
+
+    const newLine = document.createElement('br');
+    document.body.appendChild(newLine);
+
+    //3. Add event handle
+    button.addEventListener("click", function () {
+        readInput();
+        //window.location.reload(true);
+        });
+
+
+    var option1 = document.createElement('p');
+    option1.id = "players";
+    option1.innerText = "SET Number of players:";
+    inputData.appendChild(option1);
+
+    for (i=2;i<=5;i++) {
+        //create choose option
+        var checkbox = document.createElement('input');
+        checkbox.type = "radio";
+        checkbox.name = "radioButton_players";
+        checkbox.value = i;
+        checkbox.id = "players"+i;
+
+        var label = document.createElement('label');
+        label.id = 'playersLabel';
+        label.htmlFor = "id";
+        label.appendChild(document.createTextNode(i+'players'));
+
+        inputData.appendChild(checkbox);
+        inputData.appendChild(label);
+    }
+
+        //Put ENTER after buttons
+
+        var option2 = document.createElement('p');
+        option2.id = "points";
+        option2.innerText = "SET Number of points to win:";
+        inputData.appendChild(option2);
+
+        for (i=2;i<=10;i++) {
+        //create choose option
+        var checkbox = document.createElement('input');
+        checkbox.type = "radio";
+        checkbox.name = "radioButton_points";
+        checkbox.value = i;
+        checkbox.id = "points"+i;
+
+        var label = document.createElement('label');
+        label.id = 'pointsLabel';
+        label.htmlFor = "id";
+        label.appendChild(document.createTextNode(i+'pkt.'));
+
+        inputData.appendChild(checkbox);
+        inputData.appendChild(label);
+    }
+    return true;
+}
+
+
+function readInput() {
+
+    let points;
+    let players;
+    let PlayerOptions = document.getElementsByName('radioButton_players');
+
+    for (i=0;i<PlayerOptions.length;i++) {
+        if (PlayerOptions[i].checked) {
+/*            alert("Ile gra:"+ PlayerOptions[i].value);*/
+            players=PlayerOptions[i].value;
+        };
+
+    }
+
+
+    let PointsOptions = document.getElementsByName('radioButton_points');
+
+    for (i=0;i<PointsOptions.length;i++) {
+        if (PointsOptions[i].checked) {
+/*            alert("Ile punktow:"+ PointsOptions[i].value);*/
+            points=PointsOptions[i].value;
+        };
+    }
+
+    alert("Game configuration: \n  \tPlayers: "+players+"\n  \tPoints: "+points);
+
+    let HideOptions = document.getElementById('inputData');
+    HideOptions.style.display = "none";
+
+    PlayersCount=parseInt(players,0);
+    winPonints=parseInt(points,0);
+
+    return PlayersCount,winPonints,initGame();
+}
+
+
+function EndGame() {
+    let EndButtons = document.getElementById("EndButtons");
+    EndButtons.style.backgroundColor="black";
+    EndButtons.style.opacity='1';
+    EndButtons.style.fontSize='20px';
+    EndButtons.style.padding='5px';
+}

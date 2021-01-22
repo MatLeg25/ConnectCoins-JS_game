@@ -1,25 +1,38 @@
 :root {
     --singleDIVwidth: 100px;
     --singleDIVheight: 100px;
-    --GameBoardSize: 1000px;
+    --GameBoardSize: 2000px;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
 }
 
 
 body {
     background-color: cadetblue;
+    background-image: url("./png/wallhaven-nkmv9m_starry_night.jpg");
+    background-size:cover;
 /*    display: flex;
     flex-wrap: wrap;*/
 }
 
 #main {
+    width: var( --GameBoardSize);
     text-align: center;
+        position: absolute;
+    top: 1%;
+    left: 50%;
+    transform: translate(-50%, 0%);
 }
 
 #GameBoard {
 /*    background-color: black;*/
     position: center;
     text-align: center;
-/*    width: var( --GameBoardSize);*/
+    margin-bottom: 5px;
+    width: var( --GameBoardSize);
 
 }
 
@@ -42,7 +55,6 @@ body {
 .selectedLine {
     background-image: url("./png/background.png");
     background-size: contain;
-    background-repeat: no-repeat;
     border:solid black;
     display: inline-block;
     width: var(--singleDIVwidth);
@@ -54,9 +66,10 @@ body {
 
 .button {
     background-color: orange;
-    width: var(--singleDIVwidth);
+    width: calc(var(--singleDIVwidth) + 6px);
     height: 40px;
-    margin: 2px;
+    margin: 0.1%;
+    border-radius: 5px;
 }
 .button:hover {
     background-color: yellow;
@@ -77,10 +90,103 @@ body {
     margin:0.1%;
 }
 
-#playerName {
+#playerNameCURRENT {
     display: inline;
     font-weight: 900;
     background-color: darkblue;
-    color:red;
+    color:aqua;
     padding: 1%;
+}
+
+
+#inputData {
+    background-color: rgba(0, 0, 255, 0.1); /* Green background with 20% opacity */
+    text-align: center;
+    font-weight: 900;
+    font-size: 2rem;
+    padding: 5%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width:fit-content;
+    border-radius: 50%;
+}
+
+#points {
+    margin-top: 3%;
+}
+
+#points, #pointsLabel {
+    background-color: yellow;
+}
+
+#players, #playersLabel {
+    background-color: aqua;
+}
+
+#inputData button {
+    background-color: indigo;
+    color:white;
+    font-size: 4rem;
+    font-weight: 900;
+    margin: 2%;
+    border-style: outset;
+    border:3px;
+    border-radius: 15%;
+}
+
+#inputData button:hover {background-color: darkblue;color:red;}
+
+
+input[type="radio"]+label:hover {
+    color:red;
+}
+
+#stats {
+    display: inline;
+    font-weight: 900;
+    color:white;
+}
+
+#DIVplayersList {
+    color:black;
+    display: inline-flex;
+    margin-left: 10%;
+}
+
+/*set property for all specified child*/
+#DIVplayersList > div {
+    padding: 5%;
+}
+
+#statsNEXT {
+    display:inline;
+    margin-left: 10%;
+    font-weight: 900;
+    color:white;
+}
+
+#playerNameNEXT {
+    display: inline;
+    font-weight: 900;
+    background-color: darkblue;
+    color:aqua;
+    padding: 1%;
+}
+
+#EndButtons {
+    margin-top: 5px;
+    opacity: 0.5;
+    margin: 0 auto;
+    width:fit-content;
+    border-style: outset;
+}
+#EndButtons > button:hover {
+    opacity: 1;
+    cursor:progress;
+    color:white;
+    fotn-weight:900;
+    font-size: larger;
+    background-color: darkviolet;
 }
