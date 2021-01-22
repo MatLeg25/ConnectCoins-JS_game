@@ -1,40 +1,48 @@
 
-//GLOBAL VARRIABLE
+/////////////////////////////////////////////////GLOBAL VARRIABLE
+//some of variable defined to make it global (reasigned by user input from function)
 let size = 8;
 var global_counter=0;
 let PlayersCount = 2;
 var winPonints = 3; //has to be less than size
 let PLAYERS="";
 let initDefined=false;
-/////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
+//////////////////////////////call first function
 
 askInput();
 
+////////////////////////////////////////////////////////////MAIN FUNCTION
 function initGame() {
 
     if (initDefined===false) {
-        PLAYERS = createPlayer(PlayersCount);
+        PLAYERS = createPlayer(PlayersCount); //ask PlayersName only with 1st run
     }
-        size = prompt("Select table size (2-9) - !dopracowac szerokosc!");
+        size = prompt("Select table size (4-10)");
         size = parseInt(size, 0);
 
-        setScreen(size);
-        generateTable(size);
-        addENDbutton();
+        setScreen(size); //set div,game board width depended of screen
+        generateTable(size);  //generate game board (puts DIVs into HTML)
+        addENDbutton();     //add options Reset,Play again
 
-        DivsID = getDivsColumn(size);
-        console.log('Created game board:\n', DivsID);
-        gameStats();
+        gameStats();   // info about next players moves
         initDefined=true;
+
+/*        //below function could be pass as parametr to relevant function (here just to console.log)
+        let colDivsID = getDivsColumn(size);  //get DIVS group by column
+        console.log('DIVs group by column:\n', colDivsID);
+        let GameTable = getGameTable(); //get game board (DIVs in 2D array)
+        console.log('Created game board:\n', GameTable);*/
 }
 /////////////////////////////////////////////////////////
 
+
+
 ////////////////////////////////////////////////////////EXTEND HTML
+//create all game DIVs (game Table)
 function generateTable(size) {
     const main_div = document.getElementById("main");
 
-    addButtons(size);
+    addButtons(size); // add button to sleect column
 
     const GameBoard = document.createElement("div");
     GameBoard.id = "GameBoard";
@@ -60,6 +68,7 @@ function generateTable(size) {
 }
 
 
+//add buttons (select column) on the top of board
 function addButtons(size) {
 
     const main_div = document.getElementById("main");
@@ -93,6 +102,7 @@ function addButtons(size) {
 }
 
 
+//add Buttons RESTART and PLAY AGAIN on the bottom of board
 function addENDbutton() {
     const main_div = document.getElementById("main");
     const EndButtons = document.createElement('div');
@@ -123,6 +133,7 @@ function addENDbutton() {
 }
 
 
+//add DIV with game inf (Players, queue) on the bottom of game board
 function gameStats() {
         mainDIV = document.getElementById('main');
         // 1. Create the button
@@ -167,15 +178,12 @@ function gameStats() {
 
 
 ////////////////////////////////////////////////////////READ INFO FROM HTML
+//return DIVs group by column
 function getDivsColumn(size) {
     DIVidPrefix = 'DIVid';
 
     const container = document.getElementById("GameBoard");
     insideDivs = container.getElementsByTagName('div');
-
-    //const insideDivs = document.getElementsByClassName('line'); //not work after select (class changed)
-    //console.log("Ilosc DIV insice =",insideDivs.length);
-    //console.log("DIVS INSIDE:",insideDivs);
 
     columnID = [];
     columnID.push(["LineNum = ColumnNum","[Divs ID]"]); //add line to index 0
@@ -203,12 +211,12 @@ function getDivsColumn(size) {
             (eval(variableName + rest)).push(DIVidPrefix+currentDivID);
         }
     }
-    //console.log(columnID);
     return columnID;
 }
 
 
-function getGameTable () { //return array2D with index corresponding to position on board
+//return array2D with index corresponding to position on board
+function getGameTable () {
     const container = document.getElementById("GameBoard");
     insideDivs = container.getElementsByTagName('div');
 
@@ -224,12 +232,12 @@ function getGameTable () { //return array2D with index corresponding to position
             tmp_row = [];
         }
     }
-    //console.log("Game table:",GameTable);
     //console.log("[1][1]",GameTable[1][1])
     return GameTable;
 }
 
 
+//assign random colors(from the list) to players
 function getRandomColor(Players) {
     let colorList = ['red','blue','orange','magenta','lime'];
     min=0;
@@ -249,6 +257,8 @@ function getRandomColor(Players) {
     return Players;
 }
 
+
+//create new players
 function createPlayer(count) {
     players = []
 
@@ -274,6 +284,7 @@ function createPlayer(count) {
 
 
 ///////////////////////////////////////////////////////IN GAME FUNCTION
+//select players based on global_counter
 function SelectPlayer() {
 
 /*    //TWO PLAYERS
@@ -289,9 +300,7 @@ function SelectPlayer() {
         PlayerIndex = (global_counter%PlayersCount);
     }
 
-    /*console.log("PI2",PlayerIndex)*/
     currentPlayer = PLAYERS[PlayerIndex];
-    console.log("Current playerINDEXX:",PlayerIndex);
 
     if (PlayerIndex === PlayersCount-1) {nextPlayer = PLAYERS[0]} else {nextPlayer = PLAYERS[PlayerIndex+1]};
 
@@ -306,9 +315,9 @@ function SelectPlayer() {
     nextPlayer = nextPlayer2;*/
     ///////////////////////////////////////////
 
-    console.log("Current player:",currentPlayer.FirstName);
-    console.log("Next player:",nextPlayer.FirstName);
-    console.log("Next player2:",nextPlayer2.FirstName);
+    console.log("Past player:",currentPlayer.FirstName);
+    console.log("Current player:",nextPlayer.FirstName);
+    console.log("Next player:",nextPlayer2.FirstName);
     console.log("____________________________________________");
 
     ////!!! REAGSIGNED currentPlayer => nextPlayer, nextPlayer=>nextPlayer2;
@@ -339,6 +348,7 @@ function SelectPlayer() {
 }
 
 
+//SelectDIV - mark last avaliable cell in selected column
 function SelectDiv(column,size) {
 
     defaultClass = 'line';
@@ -347,7 +357,7 @@ function SelectDiv(column,size) {
 
     const allDiv = document.getElementsByClassName('line'); //get all DIVs(game board)
 
-    const DivsID = getDivsColumn(size); //get ID of all DIVs (game board positions)
+    const DivsID = getDivsColumn(size); //get ID of all DIVs group by column
     const selectedColumn = DivsID[column]; //list of DIVs in selected column
 
     //console.log("Divs ID in selected column :", selectedColumn); //list with DIVs id from selected column
@@ -369,6 +379,7 @@ function SelectDiv(column,size) {
 
 
 ////////////////////////////////// CHECK GAME
+//check if there is Win configuration selected
 function checkWin(currentPlayer) {
 
     const GameTable = getGameTable();
@@ -462,6 +473,7 @@ function checkDiagonal(GameTable,currentPlayer) {
     }
 }
 
+
 function checkSKOS_LR(GameTable,i,j,currentPlayer) {
     WINpositions = []; //list to collect winner position
 
@@ -525,7 +537,8 @@ function checkSKOS_RL(GameTable,i,j,currentPlayer) {
 
 
 
-/////////////////////////////////////DECORATION STYLE
+///////////////////////////////////////////DECORATION STYLE
+//transparency of column when mouseover button ON
 function backlight(columnID) {
     const column = getDivsColumn(size);
     //console.log("LISTA", column);
@@ -541,6 +554,7 @@ function backlight(columnID) {
 }
 
 
+//transparency of column when mouseover button OFF
 function backlightOFF(columnID) {
     const column = getDivsColumn(size);
     const DIVprefix = "DIVid";
@@ -553,8 +567,9 @@ function backlightOFF(columnID) {
 }
 
 
+//aler and format style when is WIN
 function gameWIN(currentPlayer,WINpositions){
-    alert(currentPlayer.FirstName+" has won the game!")
+    alert(currentPlayer.FirstName+" win the game!")
     console.log("Win positions:",WINpositions);
     let move = 0
     for (div of WINpositions) {
@@ -567,7 +582,7 @@ function gameWIN(currentPlayer,WINpositions){
 
 
 //////////////////////////////////////////WINDOW PROPERTY
-//adjust site to user screen
+//adjust site to user screen (DIVs and game board width)
 function setScreen(size) {
     //get resolution of user screen
     ScreenWidth = window.screen.width
@@ -601,21 +616,7 @@ function setScreen(size) {
 }
 
 
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//see all vaariable in F12:
-/*
-for(var b in window) {
-  if(window.hasOwnProperty(b)) console.log(b);
-}*/
-
-
-
-//okienko z aktualną sytuacja - kogo ruch, który tuch, itp
-//init form - ustaw inie,kolor
-
-
+//collect input from user: number of players and points to win
 function askInput() {
 
     //1. Create HTML element
@@ -687,6 +688,7 @@ function askInput() {
 }
 
 
+//read input from user and start the game (hide INPUT, SHOW GameBoard)
 function readInput() {
 
     let points;
@@ -698,9 +700,7 @@ function readInput() {
 /*            alert("Ile gra:"+ PlayerOptions[i].value);*/
             players=PlayerOptions[i].value;
         };
-
     }
-
 
     let PointsOptions = document.getElementsByName('radioButton_points');
 
@@ -711,7 +711,7 @@ function readInput() {
         };
     }
 
-    alert("Game configuration: \n  \tPlayers: "+players+"\n  \tPoints: "+points);
+    /*alert("Game configuration: \n  \tPlayers: "+players+"\n  \tPoints: "+points);*/
 
     let HideOptions = document.getElementById('inputData');
     HideOptions.style.display = "none";
@@ -723,6 +723,7 @@ function readInput() {
 }
 
 
+//make better visaable options for RESTART and PLAY AGAIN
 function EndGame() {
     let EndButtons = document.getElementById("EndButtons");
     EndButtons.style.backgroundColor="black";
@@ -730,3 +731,11 @@ function EndGame() {
     EndButtons.style.fontSize='20px';
     EndButtons.style.padding='5px';
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//see all vaariable in F12:
+/*
+for(var b in window) {
+  if(window.hasOwnProperty(b)) console.log(b);
+}*/
