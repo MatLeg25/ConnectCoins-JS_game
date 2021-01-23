@@ -45,7 +45,7 @@ body {
     display: inline-block;
 /*    width:10%;
     height: 160px;*/
-    margin:0.1%;
+/*    margin:0.1%;*/
     width: var(--singleDIVwidth);
     height: var(--singleDIVheight);
 /*    border-radius: 50%;*/
@@ -61,14 +61,14 @@ body {
     height: var(--singleDIVheight);
 /*    border-radius: 50%;*/
     color:transparent; /* hide text on DIV*/
-    margin:0.1%;
+/*    margin:0.1%;*/
 }
 
 .button {
     background-color: orange;
     width: calc(var(--singleDIVwidth) + 6px);
     height: 40px;
-    margin: 0.1%;
+/*    margin: 0.1%;*/
     border-radius: 5px;
 }
 .button:hover {
@@ -87,7 +87,7 @@ body {
 /*    border-radius: 50%;*/
     color: transparent; /* hide text on DIV*/
     font-weight: 900;
-    margin:0.1%;
+/*    margin:0.1%;*/
 }
 
 #playerNameCURRENT {

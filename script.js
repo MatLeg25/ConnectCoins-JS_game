@@ -27,11 +27,11 @@ function initGame() {
         gameStats();   // info about next players moves
         initDefined=true;
 
-/*        //below function could be pass as parametr to relevant function (here just to console.log)
+        //below function could be pass as parametr to relevant function (here just to console.log)
         let colDivsID = getDivsColumn(size);  //get DIVS group by column
         console.log('DIVs group by column:\n', colDivsID);
         let GameTable = getGameTable(); //get game board (DIVs in 2D array)
-        console.log('Created game board:\n', GameTable);*/
+        console.log('Created game board:\n', GameTable);
 }
 /////////////////////////////////////////////////////////
 
@@ -595,7 +595,7 @@ function setScreen(size) {
         minScreen = ScreenWidth
     };
     //set one dive size to be adjusted to game area (-350px due to buttons)
-    oneDivSize = (minScreen - 350) / size;
+    oneDivSize = (minScreen - 320 - (size * 2 * 2)) / size;
     oneDivSize = oneDivSize + 'px';
     /*console.log(oneDivSize);*/
 
@@ -739,3 +739,9 @@ function EndGame() {
 for(var b in window) {
   if(window.hasOwnProperty(b)) console.log(b);
 }*/
+
+//////REMARKS v1.0:
+// replace getDivsColumn by getGameTable - ease way to manipulate direct on 2D array
+// make function more modular (one function one task)
+// code refactoring and clean code (remove unused and name more clear existing)
+//
