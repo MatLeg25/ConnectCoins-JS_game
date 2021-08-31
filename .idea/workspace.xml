@@ -21,8 +21,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d8897554-f514-41b4-829c-14593fc463c6" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +50,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../week5_2324-01-2021/proman-1-python-MichaelPGudz" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
   </component>
   <component name="RunManager">
@@ -104,7 +102,12 @@
       <workItem from="1611337066295" duration="3201000" />
       <workItem from="1611388913062" duration="5201000" />
       <workItem from="1611407806688" duration="39000" />
-      <workItem from="1611431103806" duration="1069000" />
+      <workItem from="1611431103806" duration="1237000" />
+      <workItem from="1611475754150" duration="1729000" />
+      <workItem from="1611487212671" duration="9000" />
+      <workItem from="1611489722366" duration="120000" />
+      <workItem from="1611498891428" duration="595000" />
+      <workItem from="1611597246505" duration="417000" />
     </task>
     <servers />
   </component>
@@ -124,9 +127,10 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1180" y="83" key="FileChooserDialogImpl" timestamp="1611407847507">
-      <screen x="-1920" y="-251" width="1920" height="1160" />
+    <state x="740" y="334" key="FileChooserDialogImpl" timestamp="1611597666449">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="-1180" y="83" key="FileChooserDialogImpl/0.0.1366.728/-1920.-251.1920.1160@-1920.-251.1920.1160" timestamp="1611407847507" />
+    <state x="-1180" y="83" key="FileChooserDialogImpl/0.0.1366.728/-1920.-251.1920.1160@-1920.-251.1920.1160" timestamp="1611489842844" />
+    <state x="740" y="334" key="FileChooserDialogImpl/0.0.1920.1160@0.0.1920.1160" timestamp="1611597666449" />
   </component>
 </project>
